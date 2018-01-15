@@ -58,21 +58,45 @@ class SiteController extends Controller
             'error' => [
                 'class' => 'yii\web\ErrorAction',
             ],
-            'captcha' => [
+            'captcha' => [ 
                 'class' => 'yii\captcha\CaptchaAction',
-                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
         ];
     }
 
-    /**
-     * Displays homepage.
-     *
-     * @return mixed
-     */
+   
     public function actionIndex()
     {
+        $module = \Yii::$app->getModule('extrafield');
         return $this->render('index');
+    }
+
+    public function actionCreate()
+    {
+        $model = new \common\models\Product();
+        if ($model->load( Yii::$app->request->post() )) {
+            if ($model->validate()) {
+                $model->save();
+                $this->redirect(['update', 'id'=>$model->id]);
+            }
+        }
+        return $this->render('create', compact('model'));
+    }
+
+    public function actionUpdate()
+    {
+        $model = \common\models\Product::findOne((int)Yii::$app->request->get('id'));
+        $model->loadExtrafields();
+
+        if ($model->load( Yii::$app->request->post() )) {            
+            if ($model->validate()) {
+                $model->update();
+                return $this->refresh();
+            }
+        }
+
+        return $this->render('update', compact('model'));
     }
 
     /**

@@ -7,6 +7,12 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\models\LoginForm;
 
+use backend\models\extrafield\FieldFactory;
+use backend\models\extrafield\FieldInterface;
+use backend\models\extrafield\FieldText;
+use backend\models\extrafield\FieldInput;
+use backend\models\extrafield\FieldType;
+
 /**
  * Site controller
  */
