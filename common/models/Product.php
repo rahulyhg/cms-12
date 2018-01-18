@@ -4,19 +4,11 @@ namespace common\models;
 
 use Yii;
 
-/**
- * This is the model class for table "product".
- *
- * @property int $id
- * @property string $name
- * @property int $price
- */
+
 class Product extends \yii\db\ActiveRecord
 {
+    const TYPE = 'product';
 
-    /**
-     * @inheritdoc
-     */
     public static function tableName()
     {
         return 'product';
@@ -32,26 +24,26 @@ class Product extends \yii\db\ActiveRecord
         ];
     }
 
-    
-
-
     public function afterSave( $insert, $changedAttributes)
     {
         $module = \Yii::$app->getModule('extrafield');
-        $insert ? $module->initExtrafields($this->id, 'product') : $module->saveExtrafieldsData($this->id, 'product', \Yii::$app->request->post('extrafield'));
+        $post =  \Yii::$app->request->post();
+        // $setId =  \Yii::$app->request->post('extrafield_setId');
+        $setId =  1;
+        $insert ? $module->saveExtrafields(self::TYPE, $this->id, $setId, $post) : $module->updateExtrafields(self::TYPE, $this->id, $setId, $post);
 
         parent::afterSave( $insert, $changedAttributes);
     }
 
-    public function loadExtrafields()
+    public function getExtraFieldViews($setId)
     {
         $module = \Yii::$app->getModule('extrafield');
-        $this->extraViews = $module->loadData($this->id, 'product');
+        $this->extraViews = $module->getViews(self::TYPE, $setId, $this->id);
     }
 
-    public function showExtrafields()
+    public function showExtraFieldValues()
     {
-        // $module = \Yii::$app->getModule('extrafields');
-        // $module->loadData($this->id, 'product');
+        // $module = \Yii::$app->getModule('extrafield');
+        // $this->extraViews = $module->geViews(self::TYPE, $this->isNewRecord ? null : $this->id);   
     }
 }

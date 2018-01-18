@@ -6,26 +6,16 @@ use Yii;
 use common\modules\extrafield\models\ExtrafieldFieldSet as FieldSet;
 use common\modules\extrafield\models\ExtrafieldField as Field;
 
-/**
- * This is the model class for table "extrafield_set".
- *
- * @property int $id
- * @property string $name
- * @property string $object
- */
+
 class ExtrafieldSet extends \yii\db\ActiveRecord
 {
-    /**
-     * @inheritdoc
-     */
+
     public static function tableName()
     {
         return 'extrafield_set';
     }
 
-    /**
-     * @inheritdoc
-     */
+
     public function rules()
     {
         return [
@@ -58,8 +48,5 @@ class ExtrafieldSet extends \yii\db\ActiveRecord
             }
         }
         return $result2;
-
     }
-
-
 }

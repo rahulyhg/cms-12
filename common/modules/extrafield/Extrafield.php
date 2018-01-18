@@ -8,68 +8,42 @@ class Extrafield extends \yii\base\Module
 {
     public $controllerNamespace = 'common\modules\extrafield\controllers';
 
-    /**
-     * @inheritdoc
-     */
     public function init()
     {
         parent::init();
-
-        // custom initialization code goes here
     }
 
-    public function initExtrafields($objectId, $objectName)
+    // =====================
+    public function getViews($objectType, $setId, $objectId = null)
     {
         $factory = new FieldFactory();
-        $fieldsArray = $factory->setInstanceBySetId($objectId, $objectName);
-
-        foreach ($fieldsArray as $field) {
-            $field->initField($objectId, $objectName);
-        }
-    }
-
-    public function loadData($objectId, $objectName)
-    {
-        $factory = new FieldFactory();
-        $fieldsArray = $factory->setInstanceBySetId($objectId, $objectName); 
+        $fieldsArray = $factory->setInstanceBySetId($objectType, $setId, $objectId);
+        
         $views = [];
         foreach ($fieldsArray as $field) {
-            $views[] = $field->loadField($objectId, $objectName);
+            $views[] = $field->showField($objectType, $setId, $objectId);
         }
-        
         return $views;
     }
 
-    public function saveExtrafieldsData($objectId, $objectName, $dataArray)
+    // Сохранение новых данных
+    public function saveExtrafields($objectType, $objectId, $setId, $post)
     {
-        $infoToSave = $this->setInfoToSAave($dataArray);
-
-        if (!empty($infoToSave)) {
-            $factory = new FieldFactory();
-            foreach ($infoToSave as $fieldInfo) {
-                $field = $factory->setInstanceByFieldType($fieldInfo['field_type']);
-                $field->id = $fieldInfo['field_id'];
-                $field->loadWithData($fieldInfo['field_data']);
-                $field->updateData();
-            }
+        $factory = new FieldFactory();
+        $fieldsArray = $factory->setInstanceBySetId($objectType, $setId, $objectId);
+        foreach ($fieldsArray as $field) {
+            $field->saveField($objectType, $objectId, $setId, $post);
         }
-
-        $fieldsArray = $factory->setInstanceByFieldType($objectId, $objectName); 
-
-
-        
     }
 
-    public function setInfoToSAave($array)
+    // Обновление данных
+    public function updateExtrafields($objectType, $objectId, $setId, $post)
     {
-        $result = [];
-        if (!empty($array)) {
-            foreach ($array as $key => $value) {
-                $ex = explode("__", $key);
-                $result[] = ['field_type'=>$ex[0], 'field_id'=>$ex[1], 'field_data'=>$value];
-            }
-        }
-        return $result;
+        $factory = new FieldFactory();
+        $fieldsArray = $factory->setInstanceBySetId($objectType, $setId, $objectId);
+        foreach ($fieldsArray as $field) {
+            $field->updateField($objectType, $objectId, $setId, $post);
+        }        
     }
 
     

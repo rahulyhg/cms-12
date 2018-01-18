@@ -1,22 +1,22 @@
 <?php
 
-namespace common\modules\extrafield\models;
+namespace common\modules\extrafield\models\fields;
 
 use Yii;
-use common\modules\extrafield\models\FieldInterface;
-use common\modules\extrafield\models\ExtrafieldFieldType as Type;
-use common\modules\extrafield\models\ExtrafieldField;
 use yii\base\View;
+use common\modules\extrafield\models\fields\FieldInterface;
+use common\modules\extrafield\models\ExtrafieldFieldType as Type;
+use common\modules\extrafield\models\ExtrafieldField as Field;
 
 
-class ExtrafieldInt extends \yii\db\ActiveRecord implements FieldInterface
+class ExtrafieldText extends \yii\db\ActiveRecord implements FieldInterface
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'extrafield_int';
+        return 'extrafield_text';
     }
 
     /**
@@ -26,7 +26,8 @@ class ExtrafieldInt extends \yii\db\ActiveRecord implements FieldInterface
     {
         return [
             [['field_id', 'object_id', 'object_type'], 'required'],
-            [['field_id', 'value', 'object_id'], 'integer'],
+            [['field_id', 'object_id'], 'integer'],
+            [['value'], 'string'],
             [['object_type'], 'string', 'max' => 255],
         ];
     }
@@ -46,11 +47,11 @@ class ExtrafieldInt extends \yii\db\ActiveRecord implements FieldInterface
     }
 
     public function getType(){
-        return Type::NUMBER;
+        return Type::TEXT;
     }
-        
+            
     public function saveInfo(){
-        die("INT SAVE");
+        die("TEXT SAVE");
     }
 
     public function initField($objectId, $objectName)
@@ -62,19 +63,26 @@ class ExtrafieldInt extends \yii\db\ActiveRecord implements FieldInterface
 
     public function getView()
     {
-        return FieldInterface::VIEW_PATH . "/integer.php";
+        return FieldInterface::VIEW_PATH . "/text.php";
     }
 
     public function loadField($objectId, $objectName)
     {
-        $model = self::findOne($this->field_id);
-        $view = new View();
-        return $view->renderFile($this->getView(), compact('model'));
+        $model = self::find()
+                    ->where(['field_id'=>$this->field_id, 'object_id'=>$objectId, 'object_type'=>$objectName])
+                    ->with(['fieldInfo'])
+                    ->one();
+        if ($model) {
+            $view = new View();
+            return $view->renderFile($this->getView(), compact('model'));
+        } else {
+            return null;
+        }        
     }
 
-    public function getFieldType()
+    public function getFieldInfo()
     {
-        return $this->hasOne(ExtrafieldField::className(), ['id'=>$this->field_id]);
+        return $this->hasOne(Field::className(), ['id'=>'field_id']);
     }
 
     public function loadWithData($data)
@@ -91,5 +99,4 @@ class ExtrafieldInt extends \yii\db\ActiveRecord implements FieldInterface
             $field->update();
         }
     }
-
 }
