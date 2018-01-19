@@ -3,59 +3,82 @@
 namespace common\modules\extrafield\models\fields;
 
 use Yii;
-use common\modules\extrafield\models\fields\FieldInterface;
-use common\modules\extrafield\models\ExtrafieldFieldType as Type;
-use common\modules\extrafield\models\ExtrafieldField;
 use yii\base\View;
+use common\modules\extrafield\models\fields\FieldInterface;
+use common\modules\extrafield\models\active_record\IntAR;
 
 
-class Int extends \yii\db\ActiveRecord implements FieldInterface
+
+class Int extends IntAR implements FieldInterface
 {
-    public function getType(){
-        return Type::NUMBER;
-    }
-        
-    public function saveInfo(){
-        die("INT SAVE");
-    }
 
-    public function initField($objectId, $objectName)
+    public static function type()
     {
-        $this->object_id = $objectId;
-        $this->object_type = $objectName;
-        $this->save();
+        return FieldInterface::TYPE_INTEGER;
     }
 
-    public function getView()
+    public static function getViewPath()
     {
         return FieldInterface::VIEW_PATH . "/integer.php";
     }
 
-    public function loadField($objectId, $objectName)
+    public function setFieldId($id)
     {
-        $model = self::findOne($this->field_id);
+        $this->field_id = $id;
+    }
+
+    public function showField($objectType, $setId, $objectId = null)
+    {
+        $model = $this->getModel($objectType, $objectId);
         $view = new View();
-        return $view->renderFile($this->getView(), compact('model'));
+        return $view->renderFile(self::getViewPath(), compact('model'));
     }
 
-    public function getFieldType()
+    public function saveField($objectType, $objectId, $setId, $post)
     {
-        return $this->hasOne(ExtrafieldField::className(), ['id'=>$this->field_id]);
-    }
-
-    public function loadWithData($data)
-    {
-        $this->value = $data;
-    }
-
-
-    public function updateData()
-    {
-        $field = self::findOne(['id'=>$this->id]);
-        if ($field) {
-            $field->value = $this->value;
-            $field->update();
+        $this->value = $this->getPostValue($post);
+        if ($this->value) {
+            $this->object_type = $objectType;
+            $this->object_id = $objectId;
+            return $this->save();
+        } else {
+            return null;
         }
     }
 
+    public function updateField($objectType, $objectId, $setId, $post)
+    {   
+        $model = $this->getModel($objectType, $objectId);
+        $model->value = $this->getPostValue($post, $model->field_id);
+        return $model->isNewRecord ? $model->save() : $model->update();
+    }
+
+    // Берем значения с поста
+    public function getPostValue($post, $fieldId = null)
+    {
+        $label = $fieldId != null ? 'extrafield_'.$fieldId : 'extrafield_'.$this->field_id;
+        return isset($post[$label]) ? $post[$label] : null;
+    }
+
+    private function getModel($objectType, $objectId = null)
+    {
+        $model = null;
+
+        if ($objectId) {
+            $model = Int::find()->where(['field_id'=>$this->field_id, 'object_id'=>$objectId, 'object_type'=>$objectType])->one();
+            if (!$model) {
+                $model = new Int();
+                $model->field_id = $this->field_id;
+                $model->object_type = $objectType;
+                $model->object_id = $objectId;
+            }
+        } else {
+            $model = new Int();
+            $model->field_id = $this->field_id;
+            $model->object_type = $objectType;
+        }
+
+        return $model;
+
+    }
 }

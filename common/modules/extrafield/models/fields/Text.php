@@ -5,98 +5,79 @@ namespace common\modules\extrafield\models\fields;
 use Yii;
 use yii\base\View;
 use common\modules\extrafield\models\fields\FieldInterface;
-use common\modules\extrafield\models\ExtrafieldFieldType as Type;
-use common\modules\extrafield\models\ExtrafieldField as Field;
+use common\modules\extrafield\models\active_record\TextAR;
 
 
-class ExtrafieldText extends \yii\db\ActiveRecord implements FieldInterface
+class Text extends TextAR implements FieldInterface
 {
-    /**
-     * @inheritdoc
-     */
-    public static function tableName()
+    
+    public static function type()
     {
-        return 'extrafield_text';
+        return FieldInterface::TYPE_TEXT;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function rules()
-    {
-        return [
-            [['field_id', 'object_id', 'object_type'], 'required'],
-            [['field_id', 'object_id'], 'integer'],
-            [['value'], 'string'],
-            [['object_type'], 'string', 'max' => 255],
-        ];
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'field_id' => 'Field ID',
-            'value' => 'Value',
-            'object_id' => 'Object ID',
-            'object_type' => 'Object Type',
-        ];
-    }
-
-    public function getType(){
-        return Type::TEXT;
-    }
-            
-    public function saveInfo(){
-        die("TEXT SAVE");
-    }
-
-    public function initField($objectId, $objectName)
-    {
-        $this->object_id = $objectId;
-        $this->object_type = $objectName;
-        $this->save();
-    }
-
-    public function getView()
+    public static function getViewPath()
     {
         return FieldInterface::VIEW_PATH . "/text.php";
     }
 
-    public function loadField($objectId, $objectName)
+    public function setFieldId($id)
     {
-        $model = self::find()
-                    ->where(['field_id'=>$this->field_id, 'object_id'=>$objectId, 'object_type'=>$objectName])
-                    ->with(['fieldInfo'])
-                    ->one();
-        if ($model) {
-            $view = new View();
-            return $view->renderFile($this->getView(), compact('model'));
+        $this->field_id = $id;
+    }
+
+    public function showField($objectType, $setId, $objectId = null)
+    {
+        $model = $this->getModel($objectType, $objectId);
+        $view = new View();
+        return $view->renderFile(self::getViewPath(), compact('model'));
+    }
+
+    public function saveField($objectType, $objectId, $setId, $post)
+    {
+        $this->value = $this->getPostValue($post);
+        if ($this->value) {
+            $this->object_type = $objectType;
+            $this->object_id = $objectId;
+            return $this->save();
         } else {
             return null;
-        }        
-    }
-
-    public function getFieldInfo()
-    {
-        return $this->hasOne(Field::className(), ['id'=>'field_id']);
-    }
-
-    public function loadWithData($data)
-    {
-        $this->value = $data;
-    }
-
-
-    public function updateData()
-    {
-        $field = self::findOne(['id'=>$this->id]);
-        if ($field) {
-            $field->value = $this->value;
-            $field->update();
         }
+    }
+
+    public function updateField($objectType, $objectId, $setId, $post)
+    {   
+        $model = Text::find()->where(['object_type'=>$objectType, 'object_id'=>$objectId, 'field_id'=>$this->field_id])->one();
+        $model = $this->getModel($objectType, $objectId);
+        $model->value = $this->getPostValue($post, $model->field_id);
+        return $model->isNewRecord ? $model->save() : $model->update();
+    }
+
+    // Берем значения с поста
+    public function getPostValue($post, $fieldId = null)
+    {
+        $label = $fieldId != null ? 'extrafield_'.$fieldId : 'extrafield_'.$this->field_id;
+        return isset($post[$label]) ? $post[$label] : null;
+    }
+
+    private function getModel($objectType, $objectId = null)
+    {
+        $model = null;
+
+        if ($objectId) {
+            $model = Text::find()->where(['field_id'=>$this->field_id, 'object_id'=>$objectId, 'object_type'=>$objectType])->one();
+            if (!$model) {
+                $model = new Text();
+                $model->field_id = $this->field_id;
+                $model->object_type = $objectType;
+                $model->object_id = $objectId;
+            }
+        } else {
+            $model = new Text();
+            $model->field_id = $this->field_id;
+            $model->object_type = $objectType;
+        }
+
+        return $model;
     }
 }

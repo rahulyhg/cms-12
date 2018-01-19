@@ -4,14 +4,12 @@ namespace common\modules\extrafield\models\fields;
 
 use Yii;
 use yii\base\View;
-
 use common\modules\extrafield\models\fields\FieldInterface;
 use common\modules\extrafield\models\active_record\InputAR;
 
 
 
-// class Input extends InputAR implements FieldInterface
-class Input extends InputAR
+class Input extends InputAR implements FieldInterface
 {
 
     public static function type()
@@ -31,26 +29,9 @@ class Input extends InputAR
 
     public function showField($objectType, $setId, $objectId = null)
     {
-        $result = null;
-        $model = null;
-
-        if ($objectId) {
-            $model = Input::find()
-                    ->where(['field_id'=>$this->field_id, 'object_id'=>$objectId, 'object_type'=>$objectType])
-                    ->with(['fieldInfo'])
-                    ->one();
-        } else {
-            $model = new Input();
-            $model->field_id = $this->field_id;
-            $model->object_type = $objectType;
-        }
-
-        if ($model) {
-            $view = new View();
-            $result = $view->renderFile(self::getViewPath(), compact('model'));
-        }
-
-        return $result;
+        $model = $this->getModel($objectType, $objectId);
+        $view = new View();
+        return $view->renderFile(self::getViewPath(), compact('model'));
     }
 
     public function saveField($objectType, $objectId, $setId, $post)
@@ -67,14 +48,9 @@ class Input extends InputAR
 
     public function updateField($objectType, $objectId, $setId, $post)
     {   
-        $model = Input::find()->where(['object_type'=>$objectType, 'object_id'=>$objectId, 'field_id'=>$this->field_id])->one();
-
-        if ($model) {
-            $model->value = $this->getPostValue($post, $model->field_id);
-            return $model->update();
-        } else {
-            return null;
-        }
+        $model = $this->getModel($objectType, $objectId);
+        $model->value = $this->getPostValue($post, $model->field_id);
+        return $model->isNewRecord ? $model->save() : $model->update();
     }
 
     // Берем значения с поста
@@ -82,5 +58,26 @@ class Input extends InputAR
     {
         $label = $fieldId != null ? 'extrafield_'.$fieldId : 'extrafield_'.$this->field_id;
         return isset($post[$label]) ? $post[$label] : null;
+    }
+
+    private function getModel($objectType, $objectId = null)
+    {
+        $model = null;
+
+        if ($objectId) {
+            $model = Input::find()->where(['field_id'=>$this->field_id, 'object_id'=>$objectId, 'object_type'=>$objectType])->one();
+            if (!$model) {
+                $model = new Input();
+                $model->field_id = $this->field_id;
+                $model->object_type = $objectType;
+                $model->object_id = $objectId;
+            }
+        } else {
+            $model = new Input();
+            $model->field_id = $this->field_id;
+            $model->object_type = $objectType;
+        }
+
+        return $model;
     }
 }

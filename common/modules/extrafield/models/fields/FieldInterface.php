@@ -14,9 +14,11 @@ interface FieldInterface{
     
     public static function getViewPath();
     
-    // Создание пустого значения поля в БД
-    public function initField($fieldId, $objectId, $objectType);
+    public function showField($objectType, $setId, $objectId = null);
     
-    // Возврат вьюхи для поля с текущим значением
-    public function getFieldView($fieldId, $objectId, $objectType);
+    public function updateField($objectType, $objectId, $setId, $post);
+
+    public function saveField($objectType, $objectId, $setId, $post);
+
+    public function getPostValue($post, $fieldId = null);
 }

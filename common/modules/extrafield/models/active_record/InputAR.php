@@ -7,10 +7,10 @@ use common\modules\extrafield\models\active_record\ExtrafieldActiveRecordInterfa
 use common\modules\extrafield\models\ExtrafieldField as Field;
 
 
-
 // class InputAR extends \yii\db\ActiveRecord implements ExtrafieldActiveRecordInterface
 class InputAR extends \yii\db\ActiveRecord
 {
+    
     public static function tableName()
     {
         return 'extrafield_input';
@@ -30,14 +30,8 @@ class InputAR extends \yii\db\ActiveRecord
         return $this->hasOne(Field::className(), ['id'=>'field_id']);
     }
 
-    public static function getModelById($id)
-    {
-        return self::findOne(['id'=>$id]);
-    }
-
     public function getValue()
     {
         return $this->value;
     }
-
 }

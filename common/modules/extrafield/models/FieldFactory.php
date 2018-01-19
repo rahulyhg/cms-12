@@ -5,8 +5,8 @@ namespace common\modules\extrafield\models;
 use common\modules\extrafield\models\fields\FieldInterface;
 
 use common\modules\extrafield\models\fields\Input;
-// use common\modules\extrafield\models\fields\ExtrafieldText;
-// use common\modules\extrafield\models\fields\ExtrafieldInt;
+use common\modules\extrafield\models\fields\Text;
+use common\modules\extrafield\models\fields\Int;
 use common\modules\extrafield\models\ExtrafieldSet as Set;
 
 class FieldFactory extends \yii\base\Model {
@@ -19,12 +19,12 @@ class FieldFactory extends \yii\base\Model {
             case FieldInterface::TYPE_INPUT:
                 $this->instance = new Input();
                 break;
-            // case Type::TEXT:
-            //     $this->instance = new ExtrafieldText(['field_id'=>$id]);
-            //     break;
-            // case Type::NUMBER:
-            //     $this->instance = new ExtrafieldInt(['field_id'=>$id]);
-            //     break;
+            case FieldInterface::TYPE_TEXT:
+                $this->instance = new Text();
+                break;
+            case FieldInterface::TYPE_INTEGER:
+                $this->instance = new Int();
+                break;
         }
 
         if ($id != null && $this->instance != null) {
@@ -35,7 +35,6 @@ class FieldFactory extends \yii\base\Model {
     }
 
     public function setInstanceBySetId($objectType, $setId, $objectId = null) {
-        // находим типы и ID полей, которые входят в набор
         $fieldsId = Set::getFieldsId($setId);
         $result = [];
 
