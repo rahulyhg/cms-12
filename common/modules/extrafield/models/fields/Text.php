@@ -26,14 +26,14 @@ class Text extends TextAR implements FieldInterface
         $this->field_id = $id;
     }
 
-    public function showField($objectType, $setId, $objectId = null)
+    public function showField($objectType, $objectId = null)
     {
         $model = $this->getModel($objectType, $objectId);
         $view = new View();
         return $view->renderFile(self::getViewPath(), compact('model'));
     }
 
-    public function saveField($objectType, $objectId, $setId, $post)
+    public function saveField($objectType, $objectId, $post)
     {
         $this->value = $this->getPostValue($post);
         if ($this->value) {
@@ -45,7 +45,7 @@ class Text extends TextAR implements FieldInterface
         }
     }
 
-    public function updateField($objectType, $objectId, $setId, $post)
+    public function updateField($objectType, $objectId, $post)
     {   
         $model = Text::find()->where(['object_type'=>$objectType, 'object_id'=>$objectId, 'field_id'=>$this->field_id])->one();
         $model = $this->getModel($objectType, $objectId);

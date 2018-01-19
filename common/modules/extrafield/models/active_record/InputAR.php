@@ -3,11 +3,9 @@
 namespace common\modules\extrafield\models\active_record;
 
 use Yii;
-use common\modules\extrafield\models\active_record\ExtrafieldActiveRecordInterface;
 use common\modules\extrafield\models\ExtrafieldField as Field;
 
 
-// class InputAR extends \yii\db\ActiveRecord implements ExtrafieldActiveRecordInterface
 class InputAR extends \yii\db\ActiveRecord
 {
     

@@ -14,11 +14,11 @@ interface FieldInterface{
     
     public static function getViewPath();
     
-    public function showField($objectType, $setId, $objectId = null);
+    public function showField($objectType, $objectId = null);
     
-    public function updateField($objectType, $objectId, $setId, $post);
+    public function updateField($objectType, $objectId, $post);
 
-    public function saveField($objectType, $objectId, $setId, $post);
+    public function saveField($objectType, $objectId, $post);
 
     public function getPostValue($post, $fieldId = null);
 }

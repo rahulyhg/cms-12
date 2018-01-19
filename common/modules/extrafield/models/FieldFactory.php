@@ -34,7 +34,7 @@ class FieldFactory extends \yii\base\Model {
         return $this->getInstance();
     }
 
-    public function setInstanceBySetId($objectType, $setId, $objectId = null) {
+    public function setInstanceBySetId($setId) {
         $fieldsId = Set::getFieldsId($setId);
         $result = [];
 

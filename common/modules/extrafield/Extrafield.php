@@ -13,15 +13,14 @@ class Extrafield extends \yii\base\Module
         parent::init();
     }
 
-    // =====================
     public function getViews($objectType, $setId, $objectId = null)
     {
         $factory = new FieldFactory();
-        $fieldsArray = $factory->setInstanceBySetId($objectType, $setId, $objectId);
+        $fieldsArray = $factory->setInstanceBySetId($setId);
         
         $views = [];
         foreach ($fieldsArray as $field) {
-            $views[] = $field->showField($objectType, $setId, $objectId);
+            $views[] = $field->showField($objectType, $objectId);
         }
         return $views;
     }
@@ -30,9 +29,9 @@ class Extrafield extends \yii\base\Module
     public function saveExtrafields($objectType, $objectId, $setId, $post)
     {
         $factory = new FieldFactory();
-        $fieldsArray = $factory->setInstanceBySetId($objectType, $setId, $objectId);
+        $fieldsArray = $factory->setInstanceBySetId($setId);
         foreach ($fieldsArray as $field) {
-            $field->saveField($objectType, $objectId, $setId, $post);
+            $field->saveField($objectType, $objectId, $post);
         }
     }
 
@@ -40,9 +39,9 @@ class Extrafield extends \yii\base\Module
     public function updateExtrafields($objectType, $objectId, $setId, $post)
     {
         $factory = new FieldFactory();
-        $fieldsArray = $factory->setInstanceBySetId($objectType, $setId, $objectId);
+        $fieldsArray = $factory->setInstanceBySetId($setId);
         foreach ($fieldsArray as $field) {
-            $field->updateField($objectType, $objectId, $setId, $post);
+            $field->updateField($objectType, $objectId, $post);
         }        
     }
 
