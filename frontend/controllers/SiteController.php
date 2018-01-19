@@ -92,6 +92,9 @@ class SiteController extends Controller
         // грузить поля согласно выбранному сету товара
         $setId = 1;
         $model->getExtraFieldViews($setId);
+        
+        $model->getExtrafieldValues($setId);
+
         // 
 
         if ($model->load( Yii::$app->request->post() )) {            

@@ -27,6 +27,12 @@ use yii\bootstrap\ActiveForm;
                     <?php endforeach ?>
                 <?php endif ?>
 
+                <?php if ($model->extrafieldValues != null): ?>
+                    <?php foreach ($model->extrafieldValues as $field): ?>
+                        <b><?= $field['name']?></b>:<?= $field['values']?><br>
+                    <?php endforeach ?>
+                <?php endif ?>
+
                 <div class="form-group">
                     <?= Html::submitButton('Save', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
                 </div>

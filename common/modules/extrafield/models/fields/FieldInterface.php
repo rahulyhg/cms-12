@@ -10,6 +10,10 @@ interface FieldInterface{
     const TYPE_INPUT = 2;    
     const TYPE_INTEGER = 3;
 
+    const TYPE_LIST_INPUT_RADIO = 4;
+    const TYPE_LIST_INPUT_CHECKBOX = 5;
+    
+
     public static function type();
     
     public static function getViewPath();

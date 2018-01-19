@@ -15,6 +15,8 @@ class Product extends \yii\db\ActiveRecord
     }
 
     public $extraViews;
+    public $extrafieldValues;
+
     public function rules()
     {
         return [
@@ -41,9 +43,11 @@ class Product extends \yii\db\ActiveRecord
         $this->extraViews = $module->getViews(self::TYPE, $setId, $this->id);
     }
 
-    public function showExtraFieldValues()
+    
+    public function getExtrafieldValues($setId)
     {
-        // $module = \Yii::$app->getModule('extrafield');
-        // $this->extraViews = $module->geViews(self::TYPE, $this->isNewRecord ? null : $this->id);   
+        $module = \Yii::$app->getModule('extrafield');
+        $this->extrafieldValues = $module->getExtrafieldValues(self::TYPE, $this->id, $setId);
+        // echo("<pre>");print_r($this->extrafieldValues);die();
     }
 }

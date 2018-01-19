@@ -57,7 +57,11 @@ class Text extends TextAR implements FieldInterface
     public function getPostValue($post, $fieldId = null)
     {
         $label = $fieldId != null ? 'extrafield_'.$fieldId : 'extrafield_'.$this->field_id;
-        return isset($post[$label]) ? $post[$label] : null;
+        if (!isset($post[$label]) || trim($post[$label]) == "") {
+            return null;
+        } else {
+            return $post[$label];
+        }
     }
 
     private function getModel($objectType, $objectId = null)
@@ -66,18 +70,37 @@ class Text extends TextAR implements FieldInterface
 
         if ($objectId) {
             $model = Text::find()->where(['field_id'=>$this->field_id, 'object_id'=>$objectId, 'object_type'=>$objectType])->one();
-            if (!$model) {
-                $model = new Text();
-                $model->field_id = $this->field_id;
-                $model->object_type = $objectType;
-                $model->object_id = $objectId;
-            }
-        } else {
+        }
+
+        if (!$model) {
             $model = new Text();
             $model->field_id = $this->field_id;
             $model->object_type = $objectType;
+            $model->object_id = $objectId != null ? $objectId : null;
         }
 
         return $model;
+    }
+
+     public function getRawValues($objectType, $objectId)
+    {
+        $result = false;
+
+        $model = $this->getModel($objectType, $objectId);
+        if ($model->isNewRecord || ($this->getValues() == null)) {
+            return $result;
+        }
+
+        $result['values'] = $model->getValues();
+        $result['type'] = $model->type();
+        $result['name'] = $model->fieldInfo->name;
+        // $result['attributes'] = $model->getAttributes();
+        return $result;
+    }
+
+
+    public function getValues()
+    {
+        return $this->value;
     }
 }

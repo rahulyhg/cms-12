@@ -66,19 +66,37 @@ class Int extends IntAR implements FieldInterface
 
         if ($objectId) {
             $model = Int::find()->where(['field_id'=>$this->field_id, 'object_id'=>$objectId, 'object_type'=>$objectType])->one();
-            if (!$model) {
-                $model = new Int();
-                $model->field_id = $this->field_id;
-                $model->object_type = $objectType;
-                $model->object_id = $objectId;
-            }
-        } else {
+        }
+
+        if (!$model) {
             $model = new Int();
             $model->field_id = $this->field_id;
             $model->object_type = $objectType;
+            $model->object_id = $objectId != null ? $objectId : null;
         }
 
         return $model;
+    }
 
+     public function getRawValues($objectType, $objectId)
+    {
+        $result = null;
+
+        $model = $this->getModel($objectType, $objectId);
+        if ($model->isNewRecord) {
+            return $result;
+        }
+
+        $result['values'] = $model->getValues();
+        $result['type'] = $model->type();
+        $result['name'] = $model->fieldInfo->name;
+        // $result['attributes'] = $model->getAttributes();
+        return $result;
+    }
+
+
+    public function getValues()
+    {
+        return $this->value;
     }
 }
