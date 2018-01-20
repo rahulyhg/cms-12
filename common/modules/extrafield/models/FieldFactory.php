@@ -5,6 +5,7 @@ namespace common\modules\extrafield\models;
 use common\modules\extrafield\models\fields\FieldInterface;
 
 use common\modules\extrafield\models\fields\Input;
+use common\modules\extrafield\models\fields\InputList;
 use common\modules\extrafield\models\fields\Text;
 use common\modules\extrafield\models\fields\Int;
 use common\modules\extrafield\models\ExtrafieldSet as Set;
@@ -24,6 +25,9 @@ class FieldFactory extends \yii\base\Model {
                 break;
             case FieldInterface::TYPE_INTEGER:
                 $this->instance = new Int();
+                break;
+            case FieldInterface::TYPE_LIST_INPUT_CHECKBOX:
+                $this->instance = new InputList();
                 break;
         }
 

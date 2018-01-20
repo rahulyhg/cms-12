@@ -76,7 +76,6 @@ class SiteController extends Controller
         // тут по хорошему аяксом грузить поля для выбранного сета полей
         $setId = 1;
         $model->getExtraFieldViews($setId);
-        
         if ($model->load( Yii::$app->request->post() )) {
             if ($model->validate()) {
                 $model->save();
