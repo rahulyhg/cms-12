@@ -19,7 +19,7 @@ class ExtrafieldSet extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'object'], 'required'],
+            [['name'], 'required'],
             [['name', 'object'], 'string', 'max' => 255],
         ];
     }
@@ -48,5 +48,45 @@ class ExtrafieldSet extends \yii\db\ActiveRecord
             }
         }
         return $result2;
+    }
+
+    public static function getSets()
+    {
+        return self::find()->with(['fields'])->all();
+    }
+
+    public function getFields()
+    {
+        return $this->hasMany(Field::className(), ['id'=>'field_id'])->viaTable(FieldSet::tableName(), ['set_id'=>'id']);
+    }
+
+    public static function getIncludedFields($setId)
+    {
+        $result = [];
+        $fields = FieldSet::findAll(['set_id'=>$setId]);
+        if ($fields) {
+            foreach ($fields as $field) {
+                $result[] = $field->field_id;
+            }
+        }
+
+        return $result;
+    }
+
+    // Подвязать событие на удаление поляю (удалять занчения товаров)
+    public function updateIncludedFields($fieldIdsArray)
+    {
+        FieldSet::deleteAll(['set_id'=>$this->id]);
+        if (!empty($fieldIdsArray)) {
+            $set = new FieldSet();
+            foreach ($fieldIdsArray as $fieldId) {
+                $set->isNewREcord = true;
+                $set->id = null;
+                $set->set_id = $this->id;
+                $set->field_id = $fieldId;
+                $set->save();
+            }
+        }
+        return true;
     }
 }

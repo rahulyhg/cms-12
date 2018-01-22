@@ -47,10 +47,13 @@ class Text extends TextAR implements FieldInterface
 
     public function updateField($objectType, $objectId, $post)
     {   
-        $model = Text::find()->where(['object_type'=>$objectType, 'object_id'=>$objectId, 'field_id'=>$this->field_id])->one();
-        $model = $this->getModel($objectType, $objectId);
-        $model->value = $this->getPostValue($post, $model->field_id);
-        return $model->isNewRecord ? $model->save() : $model->update();
+        $this->removeOldValues($objectType, $objectId);
+        $this->saveField($objectType, $objectId, $post);
+    }
+
+    public function removeOldValues($objectType, $objectId)
+    {
+        TextAR::deleteAll(['object_type'=>$objectType, 'object_id'=>$objectId, 'field_id'=>$this->field_id]);
     }
 
     // Берем значения с поста

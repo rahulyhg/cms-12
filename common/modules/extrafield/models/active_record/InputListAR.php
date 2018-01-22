@@ -6,17 +6,12 @@ use Yii;
 
 class InputListAR extends \yii\db\ActiveRecord
 {
-    /**
-     * @inheritdoc
-     */
+    
     public static function tableName()
     {
         return 'extrafield_input_list';
     }
 
-    /**
-     * @inheritdoc
-     */
     public function rules()
     {
         return [

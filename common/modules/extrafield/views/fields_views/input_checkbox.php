@@ -3,6 +3,10 @@
 ?>
 
 <?php foreach ($models as $model): ?>
-	<?= Html::checkbox("extrafield_".$model['field_id']."[]", (bool)$model['in_use'], ['value'=>$model['value_id']]) ?><?= $model['item_name'] ?><br>
+	<?php $checked = (bool)$model['in_use'] ? "checked" : '' ?>
+	<div class="checkbox">
+	  <label>
+	  	<input <?= $checked ?> name="<?= "extrafield_".$model['field_id']."[]" ?>" type="checkbox" value="<?= $model['value_id'] ?>"><?= $model['item_name'] ?>
+	  </label>
+	</div>
 <?php endforeach ?>
-

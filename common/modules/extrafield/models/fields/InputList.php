@@ -7,10 +7,11 @@ use yii\base\View;
 use common\modules\extrafield\models\fields\FieldInterface;
 use common\modules\extrafield\models\active_record\InputListAR;
 use common\modules\extrafield\models\active_record\InputListDefinedAR;
+use common\modules\extrafield\models\fields\InputListDefinedInterface;
 
 
 
-class InputList extends InputListAR implements FieldInterface
+class InputList extends InputListAR implements FieldInterface, InputListDefinedInterface
 {
 
     public static function type()
@@ -73,13 +74,12 @@ class InputList extends InputListAR implements FieldInterface
         $object = $objectId != null ? $objectId : "NULL";
 
         $query = new \yii\db\Query;
-        $x = $query->select(['d.id as value_id', 'd.field_id', 'd.value as item_name', 'l.value as in_use'])
+
+        return $query->select(['d.id as value_id', 'd.field_id', 'd.value as item_name', 'l.value as in_use'])
                     ->from(InputListDefinedAR::tableName().' d')
                     ->leftJoin(InputListAR::tableName().' l', "d.id = l.value AND l.object_id = ".$object." AND l.object_type='".$objectType."'")
                     ->orderBy(['d.id'=>SORT_ASC])
                     ->all();
-        return $x;
-        // echo "<pre>";print_r($x);die();
     }
 
     public function getRawValues($objectType, $objectId)
@@ -104,5 +104,14 @@ class InputList extends InputListAR implements FieldInterface
     public function getValues()
     {
         return $this->value;
+    }
+
+    // @override
+    public function getFormForDefinedValues()
+    {
+        $result = null;
+        $result['values'] = InputListDefinedAR::find()->where(['field_id'=>$this->field_id])->all();
+        $result['model'] = new InputListDefinedAR(['field_id'=>$this->field_id]);
+        return $result;
     }
 }

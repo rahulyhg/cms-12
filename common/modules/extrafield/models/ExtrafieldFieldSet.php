@@ -4,7 +4,6 @@ namespace common\modules\extrafield\models;
 
 use Yii;
 
-
 class ExtrafieldFieldSet extends \yii\db\ActiveRecord
 {
 
