@@ -92,7 +92,6 @@ class SiteController extends Controller
         $setId = 1;
         $model->getExtraFieldViews($setId);
         
-        $model->getExtrafieldValues($setId);
 
         // 
 

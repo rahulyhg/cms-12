@@ -8,6 +8,7 @@ use common\modules\extrafield\models\fields\FieldInterface;
 use common\modules\extrafield\models\active_record\InputListAR;
 use common\modules\extrafield\models\active_record\InputListDefinedAR;
 use common\modules\extrafield\models\fields\InputListDefinedInterface;
+use common\modules\extrafield\models\ExtrafieldField as Field;
 
 
 
@@ -33,7 +34,8 @@ class InputList extends InputListAR implements FieldInterface, InputListDefinedI
     {
         $models = $this->getModel($objectType, $objectId);
         $view = new View();
-        return $view->renderFile(self::getViewPath(), compact('models'));
+        $name = isset($models[0]) ? $models[0]['name'] : '';
+        return $view->renderFile(self::getViewPath(), compact('models', 'name'));
     }
 
     public function saveField($objectType, $objectId, $post)
@@ -75,9 +77,11 @@ class InputList extends InputListAR implements FieldInterface, InputListDefinedI
 
         $query = new \yii\db\Query;
 
-        return $query->select(['d.id as value_id', 'd.field_id', 'd.value as item_name', 'l.value as in_use'])
+        return $query->select(['d.id as value_id', 'd.field_id', 'd.value as item_name', 'l.value as in_use', 'f.name'])
                     ->from(InputListDefinedAR::tableName().' d')
                     ->leftJoin(InputListAR::tableName().' l', "d.id = l.value AND l.object_id = ".$object." AND l.object_type='".$objectType."'")
+                    ->leftJoin(Field::tableName().' f', "d.field_id = f.id")
+                    ->where("d.field_id = ".$this->field_id)
                     ->orderBy(['d.id'=>SORT_ASC])
                     ->all();
     }

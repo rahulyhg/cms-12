@@ -40,11 +40,14 @@ class FieldFactory extends \yii\base\Model {
 
     public function setInstanceBySetId($setId) {
         $fieldsId = Set::getFieldsId($setId);
+        // print_r($fieldsId);die();
         $result = [];
 
         foreach ($fieldsId as $field) {
             $result[] = $this->setInstanceByFieldType($field['type'], $field['id']);
         }
+
+        // print_r($result);die();
 
         return $result;
     }

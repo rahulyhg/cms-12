@@ -2,6 +2,8 @@
 	use yii\helpers\Html;
 ?>
 
+
+<p><b><?= $name ?></b></p>
 <?php foreach ($models as $model): ?>
 	<?php $checked = (bool)$model['in_use'] ? "checked" : '' ?>
 	<div class="checkbox">
