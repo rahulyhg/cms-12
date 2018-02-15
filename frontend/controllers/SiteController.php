@@ -66,16 +66,13 @@ class SiteController extends Controller
    
     public function actionIndex()
     {
-        $module = \Yii::$app->getModule('extrafield');
         return $this->render('index');
     }
 
     public function actionCreate()
     {
         $model = new \common\models\Product();
-        // тут по хорошему аяксом грузить поля для выбранного сета полей
-        $setId = 1;
-        $model->getExtraFieldViews($setId);
+
         if ($model->load( Yii::$app->request->post() )) {
             if ($model->validate()) {
                 $model->save();
@@ -88,12 +85,7 @@ class SiteController extends Controller
     public function actionUpdate()
     {
         $model = \common\models\Product::findOne((int)Yii::$app->request->get('id'));
-        // грузить поля согласно выбранному сету товара
-        $setId = 1;
-        $model->getExtraFieldViews($setId);
-        
-
-        // 
+        $model->getExtraFieldViews($model->extrafield_set);
 
         if ($model->load( Yii::$app->request->post() )) {            
             if ($model->validate()) {

@@ -26,16 +26,6 @@ class Extrafield extends \yii\base\Module
         return $views;
     }
 
-    // Сохранение новых данных
-    public function saveExtrafields($objectType, $objectId, $setId, $post)
-    {
-        $factory = new FieldFactory();
-        $fieldsArray = $factory->setInstanceBySetId($setId);
-        foreach ($fieldsArray as $field) {
-            $field->saveField($objectType, $objectId, $post);
-        }
-    }
-
     // Обновление данных
     public function updateExtrafields($objectType, $objectId, $setId, $post)
     {

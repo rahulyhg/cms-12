@@ -89,4 +89,17 @@ class ExtrafieldSet extends \yii\db\ActiveRecord
         }
         return true;
     }
+
+    public function beforeDelete()
+    {
+        if (!parent::beforeDelete()) {
+            return false;
+        }
+
+        FieldSet::deleteAll(['set_id'=>$this->id]);
+        // TODO Удалять привязку к товарам
+        \common\models\Product::updateAll(['extrafield_set' => null], ['extrafield_set'=>$this->id]);
+        
+        return true;
+    }
 }

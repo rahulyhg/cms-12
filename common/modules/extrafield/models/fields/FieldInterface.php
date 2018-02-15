@@ -15,15 +15,15 @@ interface FieldInterface{
     const TYPE_LIST_INTEGER_CHECKBOX = 7;
     
 
-    public static function type();
+    // public static function type();
     
-    public static function getViewPath();
+    // public static function getViewPath();
     
-    public function showField($objectType, $objectId = null);
+    // public function showField($objectType, $objectId = null);
     
-    public function updateField($objectType, $objectId, $post);
+    // public function updateField($objectType, $objectId, $post);
 
-    public function saveField($objectType, $objectId, $post);
+    // public function saveField($objectType, $objectId, $post);
 
-    public function getPostValue($post, $fieldId = null);
+    // public function getPostValue($post, $fieldId = null);
 }

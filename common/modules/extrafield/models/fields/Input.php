@@ -9,7 +9,7 @@ use common\modules\extrafield\models\active_record\InputAR;
 
 
 
-class Input extends InputAR implements FieldInterface
+class Input extends InputAR
 {
 
     public static function type()
@@ -17,7 +17,7 @@ class Input extends InputAR implements FieldInterface
         return FieldInterface::TYPE_INPUT;
     }
 
-    public static function getViewPath()
+    public function getViewPath()
     {
         return FieldInterface::VIEW_PATH . "/input.php";
     }
@@ -31,7 +31,7 @@ class Input extends InputAR implements FieldInterface
     {
         $model = $this->getModel($objectType, $objectId);
         $view = new View();
-        return $view->renderFile(self::getViewPath(), compact('model'));
+        return $view->renderFile($this->getViewPath(), compact('model'));
     }
 
     public function saveField($objectType, $objectId, $post)
@@ -103,4 +103,16 @@ class Input extends InputAR implements FieldInterface
     {
         return $this->value;
     }
+
+    public function beforeDelete()
+    {
+        if (!parent::beforeDelete()) {
+            return false;
+        }
+
+        self::deleteAll(['field_id'=>$this->field_id]);
+        
+        return true;
+    }
+
 }

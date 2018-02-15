@@ -2,6 +2,7 @@
     use yii\helpers\Html;
 
     $this->title = 'Все поля';
+    $this->params['breadcrumbs'][] = ['label' => 'Все наборы', 'url' => ['/extrafield/default/index']];
     $this->params['breadcrumbs'][] = $this->title;
 ?>
 

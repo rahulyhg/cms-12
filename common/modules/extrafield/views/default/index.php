@@ -2,15 +2,15 @@
     use yii\helpers\Html;
     use yii\helpers\Url;
 
-    $this->title = 'Наборы полей';
+    $this->title = 'Все наборы';
     $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="row">
     <div class="col-md-12">
-        <?= Html::a("Add Field",    ['create-field'],   ['class'=>'btn btn-success']) ?>
-        <?= Html::a("Add Set",      ['create-set'],     ['class'=>'btn btn-success']) ?>
-        <?= Html::a("All fields",   ['all-fields'],     ['class'=>'btn btn-success']) ?>
+        <?= Html::a("Создать поле",    ['create-field'],   ['class'=>'btn btn-success']) ?>
+        <?= Html::a("Создать набор",      ['create-set'],     ['class'=>'btn btn-success']) ?>
+        <?= Html::a("Все поля",   ['all-fields'],     ['class'=>'btn btn-success']) ?>
     </div>
 </div>
 

@@ -12,7 +12,7 @@ use common\modules\extrafield\models\ExtrafieldField as Field;
 
 
 
-class InputList extends InputListAR implements FieldInterface, InputListDefinedInterface
+class InputList extends InputListAR implements InputListDefinedInterface
 {
 
     public static function type()
@@ -20,7 +20,7 @@ class InputList extends InputListAR implements FieldInterface, InputListDefinedI
         return FieldInterface::TYPE_LIST_INPUT_CHECKBOX;
     }
 
-    public static function getViewPath()
+    public function getViewPath()
     {
         return FieldInterface::VIEW_PATH . "/input_checkbox.php";
     }
@@ -35,7 +35,7 @@ class InputList extends InputListAR implements FieldInterface, InputListDefinedI
         $models = $this->getModel($objectType, $objectId);
         $view = new View();
         $name = isset($models[0]) ? $models[0]['name'] : '';
-        return $view->renderFile(self::getViewPath(), compact('models', 'name'));
+        return $view->renderFile($this->getViewPath(), compact('models', 'name'));
     }
 
     public function saveField($objectType, $objectId, $post)
@@ -117,5 +117,17 @@ class InputList extends InputListAR implements FieldInterface, InputListDefinedI
         $result['values'] = InputListDefinedAR::find()->where(['field_id'=>$this->field_id])->all();
         $result['model'] = new InputListDefinedAR(['field_id'=>$this->field_id]);
         return $result;
+    }
+
+    public function beforeDelete()
+    {
+        if (!parent::beforeDelete()) {
+            return false;
+        }
+        
+        InputListDefinedAR::deleteAll(['field_id'=>$this->field_id]);
+        self::deleteAll(['field_id'=>$this->field_id]);
+
+        return true;
     }
 }

@@ -99,4 +99,31 @@ class DefaultController extends Controller
 
         return $this->render('update-set', compact('model', 'includedFieldIds', 'fields'));
     }
+
+    public function actionDeleteField()
+    {
+        $id = Yii::$app->request->get('id');
+        $model = Field::findOne(['id'=>$id]);        
+
+        $factory = new Factory();
+        $field = $factory->setInstanceByFieldType($model->type, $model->id);
+        if ($field && $model) {
+            $field->delete();
+            $model->delete();
+        }
+
+        return $this->redirect(['all-fields']);
+    }
+
+    public function actionDeleteSet()
+    {
+        $id = Yii::$app->request->get('id');
+        $model = Set::findOne(['id'=>$id]);
+
+        if ($model) {
+            $model->delete();
+        }
+
+        return $this->redirect(['all-fields']);
+    }
 }

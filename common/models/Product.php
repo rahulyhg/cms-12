@@ -21,18 +21,19 @@ class Product extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'price'], 'required'],
-            [['price'], 'integer'],
+            [['price', 'extrafield_set'], 'integer'],
             [['name'], 'string', 'max' => 255],
         ];
     }
 
     public function afterSave( $insert, $changedAttributes)
-    {
-        $module = \Yii::$app->getModule('extrafield');
-        $post =  \Yii::$app->request->post();
-        // $setId =  \Yii::$app->request->post('extrafield_setId');
-        $setId =  1;
-        $insert ? $module->saveExtrafields(self::TYPE, $this->id, $setId, $post) : $module->updateExtrafields(self::TYPE, $this->id, $setId, $post);
+    {        
+        if (!$insert && $this->extrafield_set) {
+            // Если обновляем
+            $post =  \Yii::$app->request->post();
+            $module = \Yii::$app->getModule('extrafield');
+            $module->updateExtrafields(self::TYPE, $this->id, $this->extrafield_set, $post);
+        }
 
         parent::afterSave( $insert, $changedAttributes);
     }
@@ -48,6 +49,5 @@ class Product extends \yii\db\ActiveRecord
     {
         $module = \Yii::$app->getModule('extrafield');
         $this->extrafieldValues = $module->getExtrafieldValues(self::TYPE, $this->id, $setId);
-        // echo("<pre>");print_r($this->extrafieldValues);die();
     }
 }

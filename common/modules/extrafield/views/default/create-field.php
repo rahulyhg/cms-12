@@ -4,6 +4,7 @@
     use common\modules\extrafield\models\fields\FieldInterface;
 
     $this->title = 'Создание поля';
+    $this->params['breadcrumbs'][] = ['label' => 'Все наборы', 'url' => ['/extrafield/default/index']];
     $this->params['breadcrumbs'][] = $this->title;
 ?>
 

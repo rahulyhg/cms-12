@@ -6,6 +6,7 @@ use common\modules\extrafield\models\fields\FieldInterface;
 
 use common\modules\extrafield\models\fields\Input;
 use common\modules\extrafield\models\fields\InputList;
+use common\modules\extrafield\models\fields\InputListRadio;
 use common\modules\extrafield\models\fields\Text;
 use common\modules\extrafield\models\fields\Int;
 use common\modules\extrafield\models\ExtrafieldSet as Set;
@@ -29,6 +30,9 @@ class FieldFactory extends \yii\base\Model {
             case FieldInterface::TYPE_LIST_INPUT_CHECKBOX:
                 $this->instance = new InputList();
                 break;
+            case FieldInterface::TYPE_LIST_INPUT_RADIO:
+                $this->instance = new InputListRadio();
+                break;
         }
 
         if ($id != null && $this->instance != null) {
@@ -40,21 +44,17 @@ class FieldFactory extends \yii\base\Model {
 
     public function setInstanceBySetId($setId) {
         $fieldsId = Set::getFieldsId($setId);
-        // print_r($fieldsId);die();
         $result = [];
 
         foreach ($fieldsId as $field) {
             $result[] = $this->setInstanceByFieldType($field['type'], $field['id']);
         }
-
-        // print_r($result);die();
-
         return $result;
     }
     
     public function getInstance()  {
         return $this->instance;
-    }    
+    }
     
 }
 

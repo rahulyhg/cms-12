@@ -8,7 +8,8 @@ use common\modules\extrafield\models\fields\FieldInterface;
 use common\modules\extrafield\models\active_record\TextAR;
 
 
-class Text extends TextAR implements FieldInterface
+
+class Text extends TextAR
 {
     
     public static function type()
@@ -16,7 +17,7 @@ class Text extends TextAR implements FieldInterface
         return FieldInterface::TYPE_TEXT;
     }
 
-    public static function getViewPath()
+    public function getViewPath()
     {
         return FieldInterface::VIEW_PATH . "/text.php";
     }
@@ -30,7 +31,7 @@ class Text extends TextAR implements FieldInterface
     {
         $model = $this->getModel($objectType, $objectId);
         $view = new View();
-        return $view->renderFile(self::getViewPath(), compact('model'));
+        return $view->renderFile($this->getViewPath(), compact('model'));
     }
 
     public function saveField($objectType, $objectId, $post)
@@ -105,5 +106,16 @@ class Text extends TextAR implements FieldInterface
     public function getValues()
     {
         return $this->value;
+    }
+
+    public function beforeDelete()
+    {
+        if (!parent::beforeDelete()) {
+            return false;
+        }
+
+        self::deleteAll(['field_id'=>$this->field_id]);
+        
+        return true;
     }
 }
