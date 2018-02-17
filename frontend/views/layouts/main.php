@@ -37,7 +37,7 @@ AppAsset::register($this);
     ]);
     $menuItems = [
         ['label' => 'Home', 'url' => ['/site/index']],        
-        ['label' => 'Extrafield Sets', 'url' => ['/extrafield/default/index']],
+        ['label' => 'Extrafield Sets', 'url' => ['/extrafield/index']],
     ];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
